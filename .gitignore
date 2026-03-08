@@ -32,3 +32,6 @@ models/
 __pycache__/
 *.pyc
 .venv/
+
+# Blog post (published separately)
+blog/
