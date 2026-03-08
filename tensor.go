@@ -27,21 +27,6 @@ func tensorFrom(data []float32, shape ...int) *tensor {
 	return &tensor{data: data, shape: shape}
 }
 
-func (t *tensor) size() int {
-	s := 1
-	for _, d := range t.shape {
-		s *= d
-	}
-	return s
-}
-
-func (t *tensor) clone() *tensor {
-	d := make([]float32, len(t.data))
-	copy(d, t.data)
-	s := make([]int, len(t.shape))
-	copy(s, t.shape)
-	return &tensor{data: d, shape: s}
-}
 
 func (t *tensor) reshape(shape ...int) *tensor {
 	size := 1
@@ -70,12 +55,6 @@ func (t *tensor) add(other *tensor) {
 	}
 }
 
-// mul performs element-wise multiplication (Hadamard): t *= other.
-func (t *tensor) mul(other *tensor) {
-	for i := range t.data {
-		t.data[i] *= other.data[i]
-	}
-}
 
 // scale multiplies every element by a scalar.
 func (t *tensor) scale(s float32) {
