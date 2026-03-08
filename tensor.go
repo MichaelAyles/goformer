@@ -27,7 +27,6 @@ func tensorFrom(data []float32, shape ...int) *tensor {
 	return &tensor{data: data, shape: shape}
 }
 
-
 func (t *tensor) reshape(shape ...int) *tensor {
 	size := 1
 	for _, d := range shape {
@@ -54,7 +53,6 @@ func (t *tensor) add(other *tensor) {
 		t.data[i] += other.data[i]
 	}
 }
-
 
 // scale multiplies every element by a scalar.
 func (t *tensor) scale(s float32) {
