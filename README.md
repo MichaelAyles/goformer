@@ -96,18 +96,30 @@ That is the entire public surface.
 
 Benchmarked with BGE-small-en-v1.5 on Apple M1:
 
+### Inference comparison
+
+| Input | goformer (pure Go) | PyTorch (CPU) | ONNX Runtime (CPU) |
+|---|---|---|---|
+| Short (~5 tokens) | 154ms | 12.9ms | 3.0ms |
+| Medium (~11 tokens) | 287ms | 13.4ms | 4.2ms |
+| Long (~40 tokens) | 1.1s | 13.8ms | 8.8ms |
+| Batch of 8 | 2.4s | 22.5ms | 17.6ms |
+
+goformer is ~10-50x slower than optimised native runtimes. The trade-off is zero native dependencies — no CGO, no ONNX conversion pipeline, no Python in your build. For applications where embedding latency is not the bottleneck (offline indexing, RAG pipelines, document processing), this is an acceptable cost.
+
+### Component breakdown
+
 | Operation | Time | Allocs |
 |---|---|---|
 | Model load | 91ms | 261MB |
-| Embed (short text, ~5 tokens) | 154ms | 1.6MB |
-| Embed (medium text, ~11 tokens) | 287ms | 3.0MB |
-| Embed (long text, ~40 tokens) | 1.1s | 12.7MB |
-| Batch of 8 | 2.4s | 24.6MB |
 | MatMul 384×384 | 31ms | 0.6MB |
 | MatMul 384×1536 | 158ms | 2.3MB |
+| LayerNorm (128×384) | 139µs | 0 |
+| Softmax (12×128×128) | 1.0ms | 0 |
+| GELU (128×1536) | 436µs | 0 |
 | Tokenise | 1.9µs | 1KB |
 
-This is not competing with ONNX Runtime on throughput. It is fast enough for applications where embedding latency is not the bottleneck (search indexing, RAG pipelines, document processing). MatMul is the clear bottleneck — there is headroom for tiling optimisation and SIMD.
+MatMul dominates inference time. There is headroom for tiling optimisation and SIMD.
 
 ## How It Works
 
