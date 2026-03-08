@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/goformer-logo.png" alt="goformer logo" width="300">
+  <img src="assets/goformer-logo.png" alt="goformer logo" width="400">
 </p>
 
 # goformer
