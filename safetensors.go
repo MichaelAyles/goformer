@@ -65,6 +65,10 @@ func loadSafetensors(path string) (*weightMap, error) {
 				wm.tensors[name] = t
 				continue
 			}
+			// Skip non-float tensors (e.g. position_ids is I64).
+			if meta.DType == "I64" || meta.DType == "I32" {
+				continue
+			}
 			return nil, fmt.Errorf("safetensors: unsupported dtype %q for tensor %q", meta.DType, name)
 		}
 
