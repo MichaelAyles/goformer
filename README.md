@@ -94,16 +94,20 @@ That is the entire public surface.
 
 ## Performance
 
-Targets for BGE-small-en-v1.5 on a modern x86-64 CPU:
+Benchmarked with BGE-small-en-v1.5 on Apple M1:
 
-| Metric | Target |
-|---|---|
-| Single embed (short text) | < 50ms |
-| Batch of 32 | < 500ms |
-| Model load | < 2s |
-| Memory (model loaded) | < 200MB |
+| Operation | Time | Allocs |
+|---|---|---|
+| Model load | 91ms | 261MB |
+| Embed (short text, ~5 tokens) | 154ms | 1.6MB |
+| Embed (medium text, ~11 tokens) | 287ms | 3.0MB |
+| Embed (long text, ~40 tokens) | 1.1s | 12.7MB |
+| Batch of 8 | 2.4s | 24.6MB |
+| MatMul 384×384 | 31ms | 0.6MB |
+| MatMul 384×1536 | 158ms | 2.3MB |
+| Tokenise | 1.9µs | 1KB |
 
-This is not competing with ONNX Runtime on throughput. It is fast enough for applications where embedding latency is not the bottleneck (search indexing, RAG pipelines, document processing).
+This is not competing with ONNX Runtime on throughput. It is fast enough for applications where embedding latency is not the bottleneck (search indexing, RAG pipelines, document processing). MatMul is the clear bottleneck — there is headroom for tiling optimisation and SIMD.
 
 ## How It Works
 
@@ -114,18 +118,26 @@ This is not competing with ONNX Runtime on throughput. It is fast enough for app
 
 ## Correctness
 
-All outputs are validated against the HuggingFace Python `transformers` library at every stage of the forward pass:
-- Token IDs: exact match
-- Intermediate tensors per layer: absolute tolerance 1e-5
-- Final embeddings: absolute tolerance 1e-4
-- Cosine similarity between Go and Python outputs: > 0.9999
+All outputs validated against the HuggingFace Python `transformers` library:
+
+| Test case | Cosine similarity | Max element-wise diff |
+|---|---|---|
+| `DMA channel configuration` | 1.000000 | 0.000292 |
+| `The quick brown fox jumps over the lazy dog` | 0.999999 | 0.000389 |
+| `Hello` | 0.999999 | 0.000213 |
+| Long paragraph (40 tokens) | 0.999999 | 0.000241 |
+| `café résumé naïve` (unicode) | 0.999999 | 0.000211 |
+| `Hello, world! How's it going?` | 1.000000 | 0.000199 |
+
+- Token IDs: exact match against Python for all test cases
+- Batch embeddings match single embeddings
 
 ## Limitations
 
 - **CPU only.** No GPU acceleration.
 - **Inference only.** No training or fine-tuning.
 - **BERT-family only.** Encoder models with safetensors weights. Not GPT, T5, or other architectures.
-- **F32 only.** Float16 weight loading is a stretch goal.
+- **F32 and F16 weights.** Float16 weights are converted to float32 at load time.
 
 ## License
 
