@@ -7,7 +7,8 @@ import (
 	"path/filepath"
 )
 
-// Model holds a loaded BERT-family transformer model.
+// Model holds a loaded BERT-family transformer model ready for inference.
+// A Model is safe for concurrent use by multiple goroutines.
 type Model struct {
 	config                modelConfig
 	tok                   *tokeniser
@@ -30,6 +31,8 @@ type modelConfig struct {
 }
 
 // Load reads model weights, config, and tokeniser from a HuggingFace model directory.
+// The directory must contain config.json, tokenizer.json, and a .safetensors weight file.
+// Both F32 and F16 safetensors are supported.
 func Load(path string) (*Model, error) {
 	// Parse config.json.
 	cfgData, err := os.ReadFile(filepath.Join(path, "config.json"))
@@ -181,6 +184,8 @@ func loadTransformerLayer(wm *weightMap, idx int) (*transformerLayer, error) {
 }
 
 // Embed produces a normalised embedding vector for the input text.
+// The returned slice has length [Model.Dims]. Texts longer than [Model.MaxSeqLen]
+// tokens are truncated.
 func (m *Model) Embed(text string) ([]float32, error) {
 	results, err := m.EmbedBatch([]string{text})
 	if err != nil {
@@ -189,8 +194,9 @@ func (m *Model) Embed(text string) ([]float32, error) {
 	return results[0], nil
 }
 
-// EmbedBatch produces embeddings for multiple texts, padded to the
-// longest sequence and processed together.
+// EmbedBatch produces embeddings for multiple texts. All inputs are padded to
+// the longest sequence in the batch and processed together. Each returned slice
+// has length [Model.Dims].
 func (m *Model) EmbedBatch(texts []string) ([][]float32, error) {
 	if len(texts) == 0 {
 		return nil, fmt.Errorf("goformer: empty input")
@@ -232,12 +238,13 @@ func (m *Model) EmbedBatch(texts []string) ([][]float32, error) {
 	return results, nil
 }
 
-// Dims returns the embedding dimensionality.
+// Dims returns the embedding dimensionality (e.g. 384 for BGE-small-en-v1.5).
 func (m *Model) Dims() int {
 	return m.config.HiddenSize
 }
 
-// MaxSeqLen returns the maximum sequence length the model supports.
+// MaxSeqLen returns the maximum sequence length the model supports (e.g. 512 for BERT).
+// Inputs longer than this are truncated during tokenisation.
 func (m *Model) MaxSeqLen() int {
 	return m.config.MaxPositionEmbed
 }
