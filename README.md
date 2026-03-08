@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/goformer-logo.png" alt="goformer logo" width="300">
+</p>
+
 # goformer
 
 Pure Go BERT-family transformer inference. No CGO. No ONNX. No native dependencies.
