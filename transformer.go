@@ -2,7 +2,7 @@ package goformer
 
 // transformerLayer holds the weights for a single transformer encoder layer.
 type transformerLayer struct {
-	attn       *attentionWeights
+	attn                    *attentionWeights
 	attnLNGamma, attnLNBeta *tensor // LayerNorm after attention
 	ffnW1, ffnB1            *tensor // intermediate dense
 	ffnW2, ffnB2            *tensor // output dense

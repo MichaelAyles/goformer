@@ -4,9 +4,9 @@ import "math"
 
 // attentionWeights holds the weight tensors for a single attention layer.
 type attentionWeights struct {
-	qW, qB   *tensor // query projection
-	kW, kB   *tensor // key projection
-	vW, vB   *tensor // value projection
+	qW, qB     *tensor // query projection
+	kW, kB     *tensor // key projection
+	vW, vB     *tensor // value projection
 	outW, outB *tensor // output projection
 }
 

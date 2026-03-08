@@ -9,24 +9,24 @@ import (
 
 // Model holds a loaded BERT-family transformer model.
 type Model struct {
-	config    modelConfig
-	tok       *tokeniser
-	wordEmbed *tensor
-	posEmbed  *tensor
-	typeEmbed *tensor
+	config                modelConfig
+	tok                   *tokeniser
+	wordEmbed             *tensor
+	posEmbed              *tensor
+	typeEmbed             *tensor
 	embLNGamma, embLNBeta *tensor
-	layers    []*transformerLayer
+	layers                []*transformerLayer
 }
 
 // modelConfig holds values parsed from config.json.
 type modelConfig struct {
-	VocabSize          int     `json:"vocab_size"`
-	HiddenSize         int     `json:"hidden_size"`
-	NumHiddenLayers    int     `json:"num_hidden_layers"`
-	NumAttentionHeads  int     `json:"num_attention_heads"`
-	IntermediateSize   int     `json:"intermediate_size"`
-	MaxPositionEmbed   int     `json:"max_position_embeddings"`
-	LayerNormEps       float64 `json:"layer_norm_eps"`
+	VocabSize         int     `json:"vocab_size"`
+	HiddenSize        int     `json:"hidden_size"`
+	NumHiddenLayers   int     `json:"num_hidden_layers"`
+	NumAttentionHeads int     `json:"num_attention_heads"`
+	IntermediateSize  int     `json:"intermediate_size"`
+	MaxPositionEmbed  int     `json:"max_position_embeddings"`
+	LayerNormEps      float64 `json:"layer_norm_eps"`
 }
 
 // Load reads model weights, config, and tokeniser from a HuggingFace model directory.

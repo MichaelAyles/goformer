@@ -19,7 +19,7 @@ func meanPool(x *tensor, mask [][]int) *tensor {
 				continue
 			}
 			count++
-			off := (b*seqLen+s)*hidden
+			off := (b*seqLen + s) * hidden
 			outOff := b * hidden
 			for h := 0; h < hidden; h++ {
 				out.data[outOff+h] += x.data[off+h]

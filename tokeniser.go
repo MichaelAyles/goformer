@@ -23,16 +23,16 @@ type tokeniser struct {
 
 // tokenizerJSON is the top-level structure of a HuggingFace tokenizer.json.
 type tokenizerJSON struct {
-	Model         tokenizerModel          `json:"model"`
-	AddedTokens   []addedToken            `json:"added_tokens"`
-	PreTokenizer  *json.RawMessage        `json:"pre_tokenizer"`
-	Normalizer    *tokenizerNormalizer     `json:"normalizer"`
-	TruncParams   *tokenizerTruncation    `json:"truncation"`
+	Model        tokenizerModel       `json:"model"`
+	AddedTokens  []addedToken         `json:"added_tokens"`
+	PreTokenizer *json.RawMessage     `json:"pre_tokenizer"`
+	Normalizer   *tokenizerNormalizer `json:"normalizer"`
+	TruncParams  *tokenizerTruncation `json:"truncation"`
 }
 
 type tokenizerModel struct {
-	Type    string         `json:"type"`
-	Vocab   map[string]int `json:"vocab"`
+	Type  string         `json:"type"`
+	Vocab map[string]int `json:"vocab"`
 }
 
 type addedToken struct {
