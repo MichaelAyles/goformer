@@ -4,6 +4,9 @@
 
 # goformer
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/MichaelAyles/goformer.svg)](https://pkg.go.dev/github.com/MichaelAyles/goformer)
+[![CI](https://github.com/MichaelAyles/goformer/actions/workflows/ci.yml/badge.svg)](https://github.com/MichaelAyles/goformer/actions/workflows/ci.yml)
+
 Pure Go BERT-family transformer inference. No CGO. No ONNX. No native dependencies.
 
 ```go
